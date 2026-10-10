@@ -1,0 +1,28 @@
+# Runtime outputs and generated benchmark data
+runs/
+publish/
+logs/
+launch_logs/
+profile/
+cache/
+data/
+compile-debug/
+
+# Historical copies and local analysis artifacts
+backups/
+.codex_backup/
+reports/
+audits/
+
+# Local-only configuration and backup files
+config/env.local.sh
+*.bak
+*.bak-*
+
+# Python and log/cache files
+__pycache__/
+*.py[cod]
+*.log
+*.tmp
+*.swp
+.profile_pipeline_ready

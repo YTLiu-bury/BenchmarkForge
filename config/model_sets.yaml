@@ -1,0 +1,17 @@
+schema_version: 1
+
+sets:
+  daily-full:
+    description: Internal daily set containing every daily and community-dashboard model.
+    include_tags: [daily, community]
+
+  community-dashboard:
+    description: Versioned community-alignment set imported from the existing configuration.
+    include_tags: [community]
+
+  smoke:
+    description: Small cross-suite validation set.
+    models:
+      - torchbench/alexnet
+      - huggingface/BertForMaskedLM
+      - timm/tf_efficientnet_b0

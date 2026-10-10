@@ -1,0 +1,1181 @@
+schema_version: 1
+generated_from:
+- config/models.yaml migration snapshot
+- config/seeds/community_106.yaml
+suites:
+  torchbench:
+    runner: torchbench.py
+    defaults:
+      args:
+        backend: inductor
+        iterations: 50
+      flags:
+      - accuracy
+      - cold-start-latency
+      - train
+      - dump-compile-time
+      - enable-profiler
+      - disable-aclgraph
+    models:
+      alexnet:
+        tags:
+        - daily
+        - community
+        policy: {}
+      Background_Matting:
+        tags:
+        - daily
+        - community
+        policy: {}
+      basic_gnn_edgecnn:
+        tags:
+        - daily
+        - community
+        policy: {}
+      basic_gnn_gcn:
+        tags:
+        - daily
+        - community
+        policy: {}
+      basic_gnn_gin:
+        tags:
+        - daily
+        - community
+        policy: {}
+      basic_gnn_sage:
+        tags:
+        - daily
+        - community
+        policy: {}
+      BERT_pytorch:
+        tags:
+        - daily
+        - community
+        policy: {}
+      cm3leon_generate:
+        tags:
+        - daily
+        - community
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+      DALLE2_pytorch:
+        tags:
+        - daily
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - amp
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+      dcgan:
+        tags:
+        - daily
+        - community
+        policy: {}
+      densenet121:
+        tags:
+        - daily
+        - community
+        policy: {}
+      demucs:
+        tags:
+        - daily
+        - community
+        policy: {}
+      detectron2_fasterrcnn_r_101_c4:
+        tags:
+        - daily
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+      detectron2_fasterrcnn_r_101_dc5:
+        tags:
+        - daily
+        policy:
+          args:
+            timeout: 3600
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+      detectron2_fasterrcnn_r_101_fpn:
+        tags:
+        - daily
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+      detectron2_fasterrcnn_r_50_c4:
+        tags:
+        - daily
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+      detectron2_fasterrcnn_r_50_dc5:
+        tags:
+        - daily
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+      detectron2_fasterrcnn_r_50_fpn:
+        tags:
+        - daily
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+      detectron2_fcos_r_50_fpn:
+        tags:
+        - daily
+        - community
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+      detectron2_maskrcnn:
+        tags:
+        - daily
+        policy:
+          args:
+            timeout: 3600
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+      detectron2_maskrcnn_r_101_c4:
+        tags:
+        - daily
+        policy:
+          args:
+            timeout: 3600
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+      detectron2_maskrcnn_r_101_fpn:
+        tags:
+        - daily
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+      detectron2_maskrcnn_r_50_c4:
+        tags:
+        - daily
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+      detectron2_maskrcnn_r_50_fpn:
+        tags:
+        - daily
+        policy:
+          args:
+            timeout: 3600
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+      dlrm:
+        tags:
+        - daily
+        - community
+        policy: {}
+      drq:
+        tags:
+        - daily
+        - community
+        policy: {}
+      fastNLP_Bert:
+        tags:
+        - daily
+        - community
+        policy: {}
+      functorch_dp_cifar10:
+        tags:
+        - daily
+        - community
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+          - cosine
+      functorch_maml_omniglot:
+        tags:
+        - daily
+        - community
+        policy: {}
+      hf_Albert:
+        tags:
+        - daily
+        policy: {}
+      hf_Bart:
+        tags:
+        - daily
+        policy: {}
+      hf_Bert:
+        tags:
+        - daily
+        policy: {}
+      hf_Bert_large:
+        tags:
+        - daily
+        policy: {}
+      hf_BigBird:
+        tags:
+        - daily
+        policy: {}
+      hf_DistilBert:
+        tags:
+        - daily
+        policy: {}
+      hf_distil_whisper:
+        tags:
+        - daily
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+      hf_GPT2_large:
+        tags:
+        - daily
+        policy: {}
+      hf_T5_base:
+        tags:
+        - daily
+        policy: {}
+      hf_T5_large:
+        tags:
+        - daily
+        policy: {}
+      LearningToPaint:
+        tags:
+        - daily
+        - community
+        policy: {}
+      lennard_jones:
+        tags:
+        - daily
+        - community
+        policy: {}
+      mobilenet_v2:
+        tags:
+        - daily
+        - community
+        policy: {}
+      mobilenet_v2_quantized_qat:
+        tags:
+        - daily
+        policy:
+          args:
+            timeout: 3600
+      nvidia_deeprecommender:
+        tags:
+        - daily
+        - community
+        policy: {}
+      opacus_cifar10:
+        tags:
+        - daily
+        - community
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+          - cosine
+      phlippe_densenet:
+        tags:
+        - daily
+        - community
+        policy: {}
+      phlippe_resnet:
+        tags:
+        - daily
+        - community
+        policy: {}
+      pytorch_stargan:
+        tags:
+        - daily
+        - community
+        policy: {}
+      pytorch_unet:
+        tags:
+        - daily
+        - community
+        policy:
+          args:
+            timeout: 3600
+      resnet152:
+        tags:
+        - daily
+        - community
+        policy: {}
+      resnet18:
+        tags:
+        - daily
+        - community
+        policy: {}
+      resnet50:
+        tags:
+        - daily
+        - community
+        policy: {}
+      resnext50_32x4d:
+        tags:
+        - daily
+        - community
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - train
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+          - cosine
+      sam:
+        tags:
+        - daily
+        - community
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+      shufflenet_v2_x1_0:
+        tags:
+        - daily
+        - community
+        policy: {}
+      soft_actor_critic:
+        tags:
+        - daily
+        - community
+        policy: {}
+      speech_transformer:
+        tags:
+        - daily
+        - community
+        policy: {}
+      squeezenet1_1:
+        tags:
+        - daily
+        - community
+        policy: {}
+      timm_regnet:
+        tags:
+        - daily
+        policy: {}
+      timm_resnest:
+        tags:
+        - daily
+        policy: {}
+      timm_vision_transformer:
+        tags:
+        - daily
+        policy: {}
+      timm_vovnet:
+        tags:
+        - daily
+        policy: {}
+      torch_multimodal_clip:
+        tags:
+        - daily
+        - community
+        policy: {}
+      tts_angular:
+        tags:
+        - daily
+        - community
+        policy: {}
+      vgg16:
+        tags:
+        - daily
+        - community
+        policy: {}
+      yolov3:
+        tags:
+        - daily
+        - community
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+      llama:
+        tags:
+        - daily
+        - community
+        policy: {}
+      llama_v2_7b_16h:
+        tags:
+        - daily
+        - community
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+      llava:
+        tags:
+        - daily
+        - community
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+      maml:
+        tags:
+        - daily
+        - community
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+      maml_omniglot:
+        tags:
+        - daily
+        - community
+        policy: {}
+      microbench_unbacked_tolist_sum:
+        tags:
+        - daily
+        - community
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+      nanogpt:
+        tags:
+        - daily
+        - community
+        policy: {}
+      pyhpc_equation_of_state:
+        tags:
+        - daily
+        - community
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+      pyhpc_isoneutral_mixing:
+        tags:
+        - daily
+        - community
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+      pyhpc_turbulent_kinetic_energy:
+        tags:
+        - daily
+        - community
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - amp
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+      mnasnet1_0:
+        tags:
+        - daily
+        - community
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - train
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+          - cosine
+      mobilenet_v3_large:
+        tags:
+        - daily
+        - community
+        policy: {}
+      moco:
+        tags:
+        - daily
+        - community
+        policy: {}
+      moondream:
+        tags:
+        - daily
+        - community
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+      resnet50_quantized_qat:
+        tags:
+        - daily
+        policy:
+          args:
+            timeout: 3600
+      Super_SloMo:
+        tags:
+        - daily
+        - community
+        policy:
+          args:
+            timeout: 3600
+          flags:
+          - accuracy
+          - cold-start-latency
+          - train
+          - amp
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+      tacotron2:
+        tags:
+        - daily
+        policy: {}
+      timm_efficientnet:
+        tags:
+        - daily
+        policy: {}
+      timm_nfnet:
+        tags:
+        - daily
+        policy: {}
+      timm_vision_transformer_large:
+        tags:
+        - daily
+        policy: {}
+      vision_maskrcnn:
+        tags:
+        - daily
+        - community
+        policy: {}
+      doctr_det_predictor:
+        tags:
+        - community
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - amp
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+      doctr_reco_predictor:
+        tags:
+        - community
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - amp
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+      sam_fast:
+        tags:
+        - community
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - amp
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+  huggingface:
+    runner: huggingface.py
+    defaults:
+      args:
+        backend: inductor
+        iterations: 50
+      flags:
+      - accuracy
+      - cold-start-latency
+      - train
+      - dump-compile-time
+      - enable-profiler
+      - disable-aclgraph
+    models:
+      AlbertForMaskedLM:
+        tags:
+        - daily
+        - community
+        policy: {}
+      AlbertForQuestionAnswering:
+        tags:
+        - daily
+        policy: {}
+      BartForCausalLM:
+        tags:
+        - daily
+        - community
+        policy: {}
+      BartForConditionalGeneration:
+        tags:
+        - daily
+        policy: {}
+      BertForMaskedLM:
+        tags:
+        - daily
+        - community
+        policy: {}
+      BertForQuestionAnswering:
+        tags:
+        - daily
+        policy: {}
+      AllenaiLongformerBase:
+        tags:
+        - daily
+        - community
+        policy:
+          args:
+            batch-size: 4
+      BlenderbotForCausalLM:
+        tags:
+        - daily
+        - community
+        policy:
+          args:
+            batch-size: 4
+      BlenderbotForConditionalGeneration:
+        tags:
+        - daily
+        policy:
+          args:
+            batch-size: 1
+      BlenderbotSmallForCausalLM:
+        tags:
+        - daily
+        policy: {}
+      BlenderbotSmallForConditionalGeneration:
+        tags:
+        - daily
+        policy: {}
+      DebertaForMaskedLM:
+        tags:
+        - daily
+        policy: {}
+      DebertaForQuestionAnswering:
+        tags:
+        - daily
+        policy: {}
+      DebertaV2ForMaskedLM:
+        tags:
+        - daily
+        policy: {}
+      DebertaV2ForQuestionAnswering:
+        tags:
+        - daily
+        policy: {}
+      DistillGPT2:
+        tags:
+        - daily
+        - community
+        policy: {}
+      DistilBertForMaskedLM:
+        tags:
+        - daily
+        - community
+        policy: {}
+      DistilBertForQuestionAnswering:
+        tags:
+        - daily
+        policy: {}
+      ElectraForCausalLM:
+        tags:
+        - daily
+        - community
+        policy: {}
+      ElectraForQuestionAnswering:
+        tags:
+        - daily
+        policy: {}
+      GoogleFnet:
+        tags:
+        - daily
+        - community
+        policy: {}
+      GPT2ForSequenceClassification:
+        tags:
+        - daily
+        - community
+        policy: {}
+      GPTJForCausalLM:
+        tags:
+        - daily
+        policy:
+          args:
+            batch-size: 1
+      GPTJForQuestionAnswering:
+        tags:
+        - daily
+        policy:
+          args:
+            batch-size: 1
+      GPTNeoForCausalLM:
+        tags:
+        - daily
+        policy: {}
+      GPTNeoForSequenceClassification:
+        tags:
+        - daily
+        policy: {}
+      LayoutLMForMaskedLM:
+        tags:
+        - daily
+        - community
+        policy: {}
+      LayoutLMForSequenceClassification:
+        tags:
+        - daily
+        policy: {}
+      M2M100ForConditionalGeneration:
+        tags:
+        - daily
+        - community
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+      MBartForCausalLM:
+        tags:
+        - daily
+        - community
+        policy: {}
+      MT5ForConditionalGeneration:
+        tags:
+        - daily
+        - community
+        policy: {}
+      MegatronBertForCausalLM:
+        tags:
+        - daily
+        - community
+        policy: {}
+      MegatronBertForQuestionAnswering:
+        tags:
+        - daily
+        policy: {}
+      MobileBertForMaskedLM:
+        tags:
+        - daily
+        - community
+        policy: {}
+      MobileBertForQuestionAnswering:
+        tags:
+        - daily
+        policy: {}
+      OPTForCausalLM:
+        tags:
+        - daily
+        - community
+        policy: {}
+      PLBartForCausalLM:
+        tags:
+        - daily
+        - community
+        policy: {}
+      PegasusForCausalLM:
+        tags:
+        - daily
+        - community
+        policy: {}
+      PegasusForConditionalGeneration:
+        tags:
+        - daily
+        policy: {}
+      RobertaForCausalLM:
+        tags:
+        - daily
+        - community
+        policy: {}
+      RobertaForQuestionAnswering:
+        tags:
+        - daily
+        policy: {}
+      Speech2Text2ForCausalLM:
+        tags:
+        - daily
+        policy: {}
+      T5ForConditionalGeneration:
+        tags:
+        - daily
+        - community
+        policy:
+          args:
+            batch-size: 4
+      T5Small:
+        tags:
+        - daily
+        - community
+        policy:
+          args:
+            batch-size: 4
+      TrOCRForCausalLM:
+        tags:
+        - daily
+        - community
+        policy: {}
+      XGLMForCausalLM:
+        tags:
+        - daily
+        - community
+        policy: {}
+      XLNetLMHeadModel:
+        tags:
+        - daily
+        - community
+        policy:
+          args:
+            batch-size: 8
+      meta-llama/Llama-3.2-1B:
+        tags:
+        - daily
+        - community
+        policy:
+          args:
+            batch-size: 1
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+      mistralai/Mistral-7B-Instruct-v0.3:
+        tags:
+        - daily
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+      Qwen/Qwen3-0.6B:
+        tags:
+        - community
+        policy:
+          args:
+            batch-size: 1
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+      YituTechConvBert:
+        tags:
+        - community
+        policy: {}
+      google/gemma-2-2b:
+        tags:
+        - community
+        policy:
+          args:
+            batch-size: 1
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+      openai/whisper-tiny:
+        tags:
+        - community
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+  timm:
+    runner: timm_models.py
+    defaults:
+      args:
+        backend: inductor
+        iterations: 50
+      flags:
+      - accuracy
+      - cold-start-latency
+      - train
+      - dump-compile-time
+      - enable-profiler
+      - disable-aclgraph
+    models:
+      adv_inception_v3:
+        tags:
+        - daily
+        - community
+        policy: {}
+      beit_base_patch16_224:
+        tags:
+        - daily
+        - community
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+      convnextv2_nano.fcmae_ft_in22k_in1k:
+        tags:
+        - daily
+        - community
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+          - cosine
+      deit_base_distilled_patch16_224:
+        tags:
+        - daily
+        - community
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+          - cosine
+      deit_tiny_patch16_224.fb_in1k:
+        tags:
+        - daily
+        - community
+        policy: {}
+      dm_nfnet_f0:
+        tags:
+        - daily
+        - community
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+          - cosine
+      ghostnet_100:
+        tags:
+        - daily
+        - community
+        policy: {}
+      inception_v3:
+        tags:
+        - daily
+        - community
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+          - cosine
+      mobilenetv2_100:
+        tags:
+        - daily
+        - community
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+          - cosine
+      mobilenetv3_large_100:
+        tags:
+        - daily
+        - community
+        policy: {}
+      mobilevit_s:
+        tags:
+        - daily
+        - community
+        policy: {}
+      nfnet_l0:
+        tags:
+        - daily
+        - community
+        policy: {}
+      repvgg_a2:
+        tags:
+        - daily
+        - community
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+      tf_efficientnet_b0:
+        tags:
+        - daily
+        - community
+        policy: {}
+      visformer_small:
+        tags:
+        - daily
+        - community
+        policy: {}
+      vit_base_patch16_siglip_256:
+        tags:
+        - daily
+        - community
+        policy: {}
+      swin_base_patch4_window7_224:
+        tags:
+        - daily
+        - community
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+          - cosine
+      vit_base_patch14_dinov2.lvd142m:
+        tags:
+        - daily
+        - community
+        policy:
+          flags:
+          - accuracy
+          - cold-start-latency
+          - inference
+          - dump-compile-time
+          - enable-profiler
+          - disable-aclgraph
+          - cosine

@@ -1,0 +1,29 @@
+schema_version: 1
+
+paths:
+  benchmark_dir: third_party/benchmarks/torchbench
+  data_root: data/torchbenchmark/.data
+  cann_home: /usr/local/Ascend/cann-9.2.0
+  hf_home: cache/hf
+  pip_cache: cache/pip
+  runs_dir: runs
+
+defaults:
+  timeout: 2000
+  iterations: 50
+  repeat: 1
+  profiler_level: 1
+  profiler_warmup: 5
+  profiler_active: 10
+
+# Preserve the proven two-card suite layout inside the new executor.
+scheduling:
+  suite_device_slots:
+    torchbench: 0
+    huggingface: 1
+    timm: 1
+
+publishing:
+  internal_website_root: publish/internal/website
+  community_website_root: publish/community-dashboard/website
+  history_website_root: publish/internal/website

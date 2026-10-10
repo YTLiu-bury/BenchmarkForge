@@ -1,0 +1,281 @@
+# Community dashboard 106-model pipeline config.
+# Community dashboard model identifiers retained as a pipeline-owned seed.
+# Existing models inherit the current run.yaml defaults; only runner-consumable train/inference overrides are encoded here.
+Bench:
+  dir: third_party/benchmarks/torchbench
+  command: python torchbench.py
+  args:
+    backend: inductor
+    iterations: 50
+  flags:
+  - accuracy
+  - cold-start-latency
+  - train
+  - dump-compile-time
+  - enable-profiler
+  - disable-aclgraph
+  overrides:
+    cm3leon_generate:
+      flags:
+      - accuracy
+      - cold-start-latency
+      - inference
+      - dump-compile-time
+      - enable-profiler
+      - disable-aclgraph
+    detectron2_fcos_r_50_fpn:
+      flags:
+      - accuracy
+      - cold-start-latency
+      - inference
+      - dump-compile-time
+      - enable-profiler
+      - disable-aclgraph
+    doctr_det_predictor:
+      flags:
+      - accuracy
+      - cold-start-latency
+      - inference
+      - dump-compile-time
+      - enable-profiler
+      - disable-aclgraph
+    doctr_reco_predictor:
+      flags:
+      - accuracy
+      - cold-start-latency
+      - inference
+      - dump-compile-time
+      - enable-profiler
+      - disable-aclgraph
+    llama_v2_7b_16h:
+      flags:
+      - accuracy
+      - cold-start-latency
+      - inference
+      - dump-compile-time
+      - enable-profiler
+      - disable-aclgraph
+    llava:
+      flags:
+      - accuracy
+      - cold-start-latency
+      - inference
+      - dump-compile-time
+      - enable-profiler
+      - disable-aclgraph
+    maml:
+      flags:
+      - accuracy
+      - cold-start-latency
+      - inference
+      - dump-compile-time
+      - enable-profiler
+      - disable-aclgraph
+    microbench_unbacked_tolist_sum:
+      flags:
+      - accuracy
+      - cold-start-latency
+      - inference
+      - dump-compile-time
+      - enable-profiler
+      - disable-aclgraph
+    moondream:
+      flags:
+      - accuracy
+      - cold-start-latency
+      - inference
+      - dump-compile-time
+      - enable-profiler
+      - disable-aclgraph
+    pyhpc_equation_of_state:
+      flags:
+      - accuracy
+      - cold-start-latency
+      - inference
+      - dump-compile-time
+      - enable-profiler
+      - disable-aclgraph
+    pyhpc_isoneutral_mixing:
+      flags:
+      - accuracy
+      - cold-start-latency
+      - inference
+      - dump-compile-time
+      - enable-profiler
+      - disable-aclgraph
+    pyhpc_turbulent_kinetic_energy:
+      flags:
+      - accuracy
+      - cold-start-latency
+      - inference
+      - dump-compile-time
+      - enable-profiler
+      - disable-aclgraph
+    sam:
+      flags:
+      - accuracy
+      - cold-start-latency
+      - inference
+      - dump-compile-time
+      - enable-profiler
+      - disable-aclgraph
+    sam_fast:
+      flags:
+      - accuracy
+      - cold-start-latency
+      - inference
+      - dump-compile-time
+      - enable-profiler
+      - disable-aclgraph
+    yolov3:
+      flags:
+      - accuracy
+      - cold-start-latency
+      - inference
+      - dump-compile-time
+      - enable-profiler
+      - disable-aclgraph
+  models:
+  - BERT_pytorch
+  - Background_Matting
+  - LearningToPaint
+  - Super_SloMo
+  - alexnet
+  - basic_gnn_edgecnn
+  - basic_gnn_gcn
+  - basic_gnn_gin
+  - basic_gnn_sage
+  - cm3leon_generate
+  - dcgan
+  - demucs
+  - densenet121
+  - detectron2_fcos_r_50_fpn
+  - dlrm
+  - doctr_det_predictor
+  - doctr_reco_predictor
+  - drq
+  - fastNLP_Bert
+  - functorch_dp_cifar10
+  - functorch_maml_omniglot
+  - lennard_jones
+  - llama
+  - llama_v2_7b_16h
+  - llava
+  - maml
+  - maml_omniglot
+  - microbench_unbacked_tolist_sum
+  - mnasnet1_0
+  - mobilenet_v2
+  - mobilenet_v3_large
+  - moco
+  - moondream
+  - nanogpt
+  - nvidia_deeprecommender
+  - opacus_cifar10
+  - phlippe_densenet
+  - phlippe_resnet
+  - pyhpc_equation_of_state
+  - pyhpc_isoneutral_mixing
+  - pyhpc_turbulent_kinetic_energy
+  - pytorch_stargan
+  - pytorch_unet
+  - resnet152
+  - resnet18
+  - resnet50
+  - resnext50_32x4d
+  - sam
+  - sam_fast
+  - shufflenet_v2_x1_0
+  - soft_actor_critic
+  - speech_transformer
+  - squeezenet1_1
+  - torch_multimodal_clip
+  - tts_angular
+  - vgg16
+  - vision_maskrcnn
+  - yolov3
+HuggingFace:
+  dir: third_party/benchmarks/torchbench
+  command: python huggingface.py
+  args:
+    backend: inductor
+    iterations: 50
+  flags:
+  - accuracy
+  - cold-start-latency
+  - train
+  - dump-compile-time
+  - enable-profiler
+  - disable-aclgraph
+  overrides:
+    M2M100ForConditionalGeneration:
+      flags:
+      - accuracy
+      - cold-start-latency
+      - inference
+      - dump-compile-time
+      - enable-profiler
+      - disable-aclgraph
+  models:
+  - AlbertForMaskedLM
+  - AllenaiLongformerBase
+  - BartForCausalLM
+  - BertForMaskedLM
+  - BlenderbotForCausalLM
+  - DistilBertForMaskedLM
+  - DistillGPT2
+  - ElectraForCausalLM
+  - GPT2ForSequenceClassification
+  - GoogleFnet
+  - LayoutLMForMaskedLM
+  - M2M100ForConditionalGeneration
+  - MBartForCausalLM
+  - MT5ForConditionalGeneration
+  - MegatronBertForCausalLM
+  - MobileBertForMaskedLM
+  - OPTForCausalLM
+  - PLBartForCausalLM
+  - PegasusForCausalLM
+  - Qwen/Qwen3-0.6B
+  - RobertaForCausalLM
+  - T5ForConditionalGeneration
+  - T5Small
+  - TrOCRForCausalLM
+  - XGLMForCausalLM
+  - XLNetLMHeadModel
+  - YituTechConvBert
+  - google/gemma-2-2b
+  - meta-llama/Llama-3.2-1B
+  - openai/whisper-tiny
+Timm:
+  dir: third_party/benchmarks/torchbench
+  command: python timm_models.py
+  args:
+    backend: inductor
+    iterations: 50
+  flags:
+  - accuracy
+  - cold-start-latency
+  - train
+  - dump-compile-time
+  - enable-profiler
+  - disable-aclgraph
+  models:
+  - adv_inception_v3
+  - beit_base_patch16_224
+  - convnextv2_nano.fcmae_ft_in22k_in1k
+  - deit_base_distilled_patch16_224
+  - deit_tiny_patch16_224.fb_in1k
+  - dm_nfnet_f0
+  - ghostnet_100
+  - inception_v3
+  - mobilenetv2_100
+  - mobilenetv3_large_100
+  - mobilevit_s
+  - nfnet_l0
+  - repvgg_a2
+  - swin_base_patch4_window7_224
+  - tf_efficientnet_b0
+  - visformer_small
+  - vit_base_patch14_dinov2.lvd142m
+  - vit_base_patch16_siglip_256

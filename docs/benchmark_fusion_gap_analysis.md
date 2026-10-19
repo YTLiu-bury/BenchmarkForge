@@ -344,3 +344,155 @@ GPU 相同融合耗时 | NPU 相同融合耗时 | GPU/NPU | 主要 GAP 类型
 ```
 
 这张表可以直接作为后续 Triton-Experimental 优化、算子融合补齐和性能回归跟踪的依据。
+
+---
+
+## 11. 实例教学：1017 的 `resnet50`
+
+下面用 2026-10-17 流水中的 `resnet50` 演示一遍分析过程。
+
+原始 Profile 根目录为：
+
+```text
+/home/l00971669/workspace_benchmark/runs/20261017-weekly-full-v2130-dvm-triton-experimental-dynamic-off/board-stage/board_file/raw_data/20261017/benchmark/2130/
+```
+
+模型的四类 Profile 位于：
+
+```text
+{dvm,triton_experimental}/default/torchbench_resnet50/profile/
+├── inference/eager/
+├── inference/compile/
+├── train/eager/
+└── train/compile/
+```
+
+每组数据使用三个文件：
+
+```text
+step_trace_time.csv
+op_statistic.csv
+kernel_details.csv
+```
+
+### 11.1 先看模型 E2E
+
+E2E 数据来自对应的 `board_log/*.log`，而不是 Profile CSV。`resnet50` 的结果如下：
+
+| 后端 | 模式 | eager 平均 step | compile 平均 step | E2E 加速比 |
+|---|---|---:|---:|---:|
+| DVM | inference | 33.09 ms | 36.65 ms | 0.90x |
+| Triton-Experimental | inference | 19.25 ms | 10.49 ms | 1.84x |
+| DVM | train | 111.91 ms | 106.83 ms | 1.05x |
+| Triton-Experimental | train | 72.08 ms | 60.17 ms | 1.20x |
+
+这个结果说明：
+
+- Triton-Experimental inference 的 E2E 收益最明显；
+- DVM inference 的 compile E2E 反而比 eager 慢，不能只看它是否生成了融合 Kernel；
+- E2E 和 Computing 不是同一个指标，二者差距较大时，应该继续排查调度、内存、准备阶段和 fallback。
+
+### 11.2 第二步：再看 Computing
+
+从 `step_trace_time.csv` 读取 10 个采样 step 的 `Computing` 列，计算平均值。结果如下，单位为微秒：
+
+| 后端 | 模式 | eager | compile | compile/eager |
+|---|---|---:|---:|---:|
+| DVM | inference | 4827.25 | 4875.22 | 1.010 |
+| Triton-Experimental | inference | 4855.31 | 3705.06 | 0.763 |
+| DVM | train | 30949.51 | 31376.68 | 1.014 |
+| Triton-Experimental | train | 31346.30 | 13327.49 | 0.425 |
+
+因此，按当前采样结果：
+
+- DVM 在 `resnet50` 上没有体现出 Computing 降低；
+- Triton-Experimental inference 的 Computing 约下降 23.7%；
+- Triton-Experimental train 的 Computing 约下降 57.5%。
+
+这里首先只能得出“后端计算区间发生了变化”，还不能直接说全部收益都来自融合，因为 Computing 还可能受 Kernel 调度、访存和算子实现影响。
+
+### 11.3 第三步：统计 Kernel 数量
+
+从 `kernel_details.csv` 统计每组 Profile 的 Kernel 行数：
+
+| 后端 | 模式 | eager Kernel 行数 | compile Kernel 行数 | 减少比例 |
+|---|---|---:|---:|---:|
+| DVM | inference | 3490 | 3320 | 4.9% |
+| Triton-Experimental | inference | 3490 | 2790 | 20.1% |
+| DVM | train | 11060 | 10860 | 1.8% |
+| Triton-Experimental | train | 11060 | 8770 | 20.7% |
+
+这说明 Triton-Experimental 在该模型上确实减少了更多运行 Kernel，但 Kernel 数量减少比例不能直接等同于性能提升比例。一个融合 Kernel 可能比多个原始 Kernel 更慢，也可能引入更高的访存或调度成本。
+
+### 11.4 第四步：识别融合 Kernel
+
+本次示例使用 Kernel 名称中包含 `fused` 的记录作为初步识别条件：
+
+| 后端 | 模式 | compile 融合 Kernel 行数 | 融合 Kernel 名称数 | 融合 Kernel 耗时占比 |
+|---|---|---:|---:|---:|
+| DVM | inference | 490 | 13 | 10.4% |
+| Triton-Experimental | inference | 490 | 17 | 21.9% |
+| DVM | train | 670 | 20 | 2.4% |
+| Triton-Experimental | train | 1190 | 50 | 20.0% |
+
+Triton-Experimental inference 中可以看到类似：
+
+```text
+triton_unk_fused__native_batch_norm_legit_no_training_convolution_relu
+triton_unk_fused__native_batch_norm_legit_no_training_add_relu
+triton_unk_fused__native_batch_norm_legit_no_training_add_mean_relu
+```
+
+这说明它至少形成了 BatchNorm、Convolution、Add、Relu 等组合。训练场景还出现了包含 backward 的融合 Kernel，例如：
+
+```text
+triton_unk_fused_*_convolution_backward_*_batch_norm_backward_*
+```
+
+这类名称可以帮助我们快速找到候选融合，但目前仍然只是**运行时启发式判断**，不能作为最终的融合覆盖率。最终结果仍需结合 FX/Inductor 图，确认 Kernel 名称中的算子序列与编译图节点一致。
+
+### 11.5 这个例子能说明什么
+
+在 `resnet50` 上，当前数据支持以下初步结论：
+
+1. Triton-Experimental compile 相比 eager 减少了约 20% 的 Kernel 行数；
+2. Triton-Experimental 生成了更多带有 `fused` 标识的 Kernel；
+3. inference Computing 从约 4.86 ms 降到约 3.71 ms；
+4. train Computing 从约 31.35 ms 降到约 13.33 ms；
+5. DVM 的 Kernel 数量和 Computing 变化较小，因此该模型上 Triton-Experimental 的主要收益更像是融合范围扩大，而不是单个未融合 Kernel 普遍变快。
+
+### 11.6 这个例子还不能说明什么
+
+当前只有 NPU Profile，没有 GPU Profile，因此不能据此回答：
+
+- GPU 是否形成了相同的 BatchNorm+Convolution+Relu 融合；
+- NPU 和 GPU 的相同融合 Kernel 谁更快；
+- NPU 的融合覆盖率是否已经达到 GPU 水平。
+
+此外，当前每组只有 10 个采样 step，适合做第一轮定位，不适合直接作为最终的 P50/P90 性能结论。
+
+### 11.7 可复用的分析命令
+
+后续分析其他模型时，可以复用下面的流程。下面的 `analyze_*.py` 是分析脚本接口示意，当前仓库还没有这三个统一脚本；现阶段可以用同样的字段通过 Python/awk 临时统计，后续再固化成正式工具：
+
+```bash
+# 1. 找到模型的四组 Profile
+find <raw_data>/benchmark/2130/{dvm,triton_experimental}/default/<model>/profile \\
+  -type f | sort
+
+# 2. 查看 Computing
+python analyze_step_trace.py \\
+  --input <model>/profile \\
+  --column Computing
+
+# 3. 查看算子统计
+python analyze_op_statistic.py \\
+  --input <model>/profile/{eager,compile}/op_statistic.csv
+
+# 4. 查看 Kernel 数量、融合名称和耗时
+python analyze_kernel_details.py \\
+  --input <model>/profile/{eager,compile}/kernel_details.csv \\
+  --match fused
+```
+
+第一轮可以先用 CSV 和 Kernel 名称完成筛选；进入正式优化前，再为候选模型补充 FX 图和融合 manifest，避免仅凭 Kernel 名称误判融合关系。

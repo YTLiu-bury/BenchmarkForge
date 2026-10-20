@@ -51,6 +51,7 @@ def effective_command(
     benchmark_dir: Path,
     backend: str,
     result_file: Path,
+    mode: str,
     profile_dir: Path,
     iterations: int | None,
     repeat: int | None,
@@ -63,6 +64,11 @@ def effective_command(
 ) -> list[str]:
     args = dict(model.args)
     flags = list(model.flags)
+    if mode not in {"train", "inference"}:
+        raise ValueError(f"unsupported benchmark mode: {mode}")
+    flags = replace_flag(flags, "train", False)
+    flags = replace_flag(flags, "inference", False)
+    flags.append(mode)
     if iterations is not None:
         args["iterations"] = iterations
     if repeat is not None:
@@ -131,46 +137,51 @@ def build_plan(
         backend_devices = devices[backend]
         for dynamic in dynamic_modes:
             for index, model in enumerate(models):
-                case_timeout = int(model.args.get("timeout", timeout or 0)) or None
-                slot = int(suite_slots.get(model.suite, index))
-                device = backend_devices[min(max(slot, 0), len(backend_devices) - 1)]
-                case_token = sanitize(f"{model.suite}-{model.name}-{backend}-dynamic-{dynamic}")
-                digest = hashlib.sha1(model.model_id.encode("utf-8")).hexdigest()[:8]
-                case_id = f"{case_token}-{digest}"
-                result_file = run_dir / "raw" / f"{case_id}.csv"
-                profile_dir = run_dir / "profile" / case_id
-                command = effective_command(
-                    model,
-                    python=sys.executable,
-                    benchmark_dir=benchmark_dir,
-                    backend=backend,
-                    result_file=result_file,
-                    profile_dir=profile_dir,
-                    iterations=iterations,
-                    repeat=repeat,
-                    timeout=case_timeout,
-                    aclgraph=aclgraph,
-                    dynamic=dynamic,
-                    profile=profile,
-                    profiler_level=profiler_level,
-                    profiler_warmup=profiler_warmup,
-                )
-                cases.append(
-                    {
-                        "case_id": case_id,
-                        "model_id": model.model_id,
-                        "suite": model.suite,
-                        "model": model.name,
-                        "backend": backend,
-                        "dynamic": dynamic,
-                        "device": device,
-                        "timeout": case_timeout,
-                        "command": command,
-                        "log": str(run_dir / "logs" / f"{case_id}.log"),
-                        "output": str(result_file),
-                        "profile": str(profile_dir),
-                    }
-                )
+                for mode in model.modes:
+                    case_timeout = int(model.args.get("timeout", timeout or 0)) or None
+                    slot = int(suite_slots.get(model.suite, index))
+                    device = backend_devices[min(max(slot, 0), len(backend_devices) - 1)]
+                    case_token = sanitize(
+                        f"{model.suite}-{model.name}-{backend}-{mode}-dynamic-{dynamic}"
+                    )
+                    digest = hashlib.sha1(model.model_id.encode("utf-8")).hexdigest()[:8]
+                    case_id = f"{case_token}-{digest}"
+                    result_file = run_dir / "raw" / f"{case_id}.csv"
+                    profile_dir = run_dir / "profile" / case_id
+                    command = effective_command(
+                        model,
+                        python=sys.executable,
+                        benchmark_dir=benchmark_dir,
+                        backend=backend,
+                        result_file=result_file,
+                        mode=mode,
+                        profile_dir=profile_dir,
+                        iterations=iterations,
+                        repeat=repeat,
+                        timeout=case_timeout,
+                        aclgraph=aclgraph,
+                        dynamic=dynamic,
+                        profile=profile,
+                        profiler_level=profiler_level,
+                        profiler_warmup=profiler_warmup,
+                    )
+                    cases.append(
+                        {
+                            "case_id": case_id,
+                            "model_id": model.model_id,
+                            "suite": model.suite,
+                            "model": model.name,
+                            "backend": backend,
+                            "dynamic": dynamic,
+                            "mode": mode,
+                            "device": device,
+                            "timeout": case_timeout,
+                            "command": command,
+                            "log": str(run_dir / "logs" / f"{case_id}.log"),
+                            "output": str(result_file),
+                            "profile": str(profile_dir),
+                        }
+                    )
     return {
         "schema_version": 1,
         "run_id": run_id,
@@ -181,6 +192,7 @@ def build_plan(
         "case_count": len(cases),
         "backends": backends,
         "dynamic_modes": dynamic_modes,
+        "modes": sorted({str(case["mode"]) for case in cases}),
         "devices": devices,
         "scheduling": {
             "strategy": "suite_device_slots" if suite_slots else "round_robin",

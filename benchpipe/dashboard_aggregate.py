@@ -136,6 +136,7 @@ def normalize_run(
     normalized["source_date"] = source_date
     normalized["mode"] = normalize_mode_label(normalized.get("mode"))
     normalized["mode_label"] = normalize_mode_label(normalized.get("mode_label")) or normalized["mode"]
+    normalized["execution_mode"] = str(normalized.get("execution_mode") or "legacy").strip().lower()
     normalized["extension"] = str(normalized.get("extension") or "default")
     normalized["run_id"] = rewrite_run_id(normalized.get("run_id"), logical_date)
     normalized["source_file"] = str(source_path)
@@ -151,6 +152,9 @@ def normalize_run(
         entry["logical_date"] = logical_date
         entry["source_date"] = source_date
         entry["mode"] = normalize_mode_label(entry.get("mode") or normalized["mode"])
+        entry["execution_mode"] = str(
+            entry.get("execution_mode") or normalized["execution_mode"] or "legacy"
+        ).strip().lower()
         entry["extension"] = str(entry.get("extension") or normalized["extension"])
     normalized["model_count"] = len(models)
     return normalized
@@ -238,6 +242,7 @@ def collect_runs(
                     str(run.get("run_id") or ""),
                     str(run.get("type") or ""),
                     str(run.get("mode") or ""),
+                    str(run.get("execution_mode") or "legacy"),
                     str(run.get("extension") or ""),
                     str(run.get("pta_version") or ""),
                 ]
@@ -270,6 +275,7 @@ def run_summary(run: dict[str, Any]) -> dict[str, Any]:
         "type": run.get("type", ""),
         "mode": run.get("mode", ""),
         "mode_label": run.get("mode_label", ""),
+        "execution_mode": run.get("execution_mode", "legacy"),
         "extension": run.get("extension", "default"),
         "pta_version": run.get("pta_version", ""),
         "pr_id": run.get("pr_id", ""),

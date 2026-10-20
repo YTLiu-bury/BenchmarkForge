@@ -7,8 +7,21 @@ if (($# < 1)); then
 fi
 
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
-# shellcheck disable=SC1091
-source "$ROOT/config/env.local.sh" 2>/dev/null || source "$ROOT/config/env.example.sh"
+# Select the runtime profile without changing the historical default.
+ENV_FILE="${BENCHMARK_ENV_FILE:-$ROOT/config/env.local.sh}"
+if [[ "$ENV_FILE" != /* ]]; then
+  ENV_FILE="$ROOT/$ENV_FILE"
+fi
+if [[ ! -f "$ENV_FILE" ]]; then
+  if [[ "$ENV_FILE" == "$ROOT/config/env.local.sh" ]]; then
+    ENV_FILE="$ROOT/config/env.example.sh"
+  else
+    echo "runtime environment file not found: $ENV_FILE" >&2
+    exit 2
+  fi
+fi
+# shellcheck disable=SC1090
+source "$ENV_FILE"
 # shellcheck disable=SC1090
 source "$ROOT/scripts/activate_runtime.sh"
 

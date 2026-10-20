@@ -172,6 +172,8 @@ suites:
           - enable-profiler
           - disable-aclgraph
       detectron2_maskrcnn:
+        enabled: false
+        reason: "Community torchbench.yaml skip.all: OOM on the reference runner."
         tags:
         - daily
         policy:
@@ -434,6 +436,8 @@ suites:
         - community
         policy: {}
       timm_regnet:
+        enabled: false
+        reason: "Community torchbench.yaml skips the duplicate TorchBench TIMM entry."
         tags:
         - daily
         policy: {}
@@ -442,6 +446,8 @@ suites:
         - daily
         policy: {}
       timm_vision_transformer:
+        enabled: false
+        reason: "Community torchbench.yaml skips the duplicate TorchBench TIMM entry."
         tags:
         - daily
         policy: {}
@@ -633,6 +639,8 @@ suites:
           - enable-profiler
           - disable-aclgraph
       tacotron2:
+        enabled: false
+        reason: "Community torchbench.yaml skip.all: timeout on the reference runner."
         tags:
         - daily
         policy: {}
@@ -641,6 +649,8 @@ suites:
         - daily
         policy: {}
       timm_nfnet:
+        enabled: false
+        reason: "Community torchbench.yaml skips the duplicate TorchBench TIMM entry."
         tags:
         - daily
         policy: {}
@@ -745,6 +755,8 @@ suites:
           args:
             batch-size: 4
       BlenderbotForConditionalGeneration:
+        enabled: false
+        reason: "Community huggingface.yaml skip.all: model setup/accuracy unsupported."
         tags:
         - daily
         policy:
@@ -954,6 +966,8 @@ suites:
           - enable-profiler
           - disable-aclgraph
       mistralai/Mistral-7B-Instruct-v0.3:
+        enabled: false
+        reason: "Community huggingface.yaml skip.all: model too large for the reference runner."
         tags:
         - daily
         policy:

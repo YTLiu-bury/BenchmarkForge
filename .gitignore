@@ -16,6 +16,8 @@ audits/
 
 # Local-only configuration and backup files
 config/env.local.sh
+config/env.*.sh
+!config/env.example.sh
 *.bak
 *.bak-*
 
@@ -23,6 +25,8 @@ config/env.local.sh
 __pycache__/
 *.py[cod]
 *.log
+*.pid
+*-cache/
 *.tmp
 *.swp
 .profile_pipeline_ready

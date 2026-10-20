@@ -203,6 +203,7 @@ def execute_case(
         "model": case["model"],
         "backend": case["backend"],
         "dynamic": str(case.get("dynamic", "config")),
+        "mode": str(case.get("mode", "config")),
         "device": device,
         "status": status,
         "return_code": return_code,

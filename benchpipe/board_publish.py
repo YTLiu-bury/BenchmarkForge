@@ -213,10 +213,11 @@ def stage_case(case: dict[str, Any], backend_dir: Path) -> tuple[bool, set[str]]
     model_dir = backend_dir / model_key
     log_dir = model_dir / "board_log"
     log_dir.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(log_path, log_dir / f"{case['case_id']}.log")
+    execution_mode = str(case.get("mode") or "legacy").strip().lower()
+    shutil.copy2(log_path, log_dir / f"{execution_mode}_{case['case_id']}.log")
 
     profile_source = Path(str(case.get("profile", "")))
-    profile_target = model_dir / "profile"
+    profile_target = model_dir / "profile" / execution_mode
     staged_phases = stage_profile_files(profile_source, profile_target)
     return True, staged_phases
 
@@ -335,12 +336,12 @@ def publish_board_data(
                 ]
                 if not cases:
                     continue
-                layout = dashboard_processor.RawDataLayout.create(
-                    run_type, backend, run_date, package_tag, run_extension
-                )
                 model_aliases: dict[str, str] = {}
                 for case in cases:
-                    staged, profile_phases = stage_case(case, layout.backend_dir)
+                    stage_layout = dashboard_processor.RawDataLayout.create(
+                        run_type, backend, run_date, package_tag, run_extension
+                    )
+                    staged, profile_phases = stage_case(case, stage_layout.backend_dir)
                     if staged:
                         alias = sanitize(
                             str(case.get("model_id") or case.get("model") or case.get("case_id"))
@@ -353,15 +354,22 @@ def publish_board_data(
                             profile_counts["partial"] += 1
                         else:
                             profile_counts["missing"] += 1
-                if not layout.iter_model_dirs():
-                    continue
-                generated_run = dashboard_processor.RawDataProcessor(layout).process()
-                generated_run = canonicalize_run_models(generated_run, model_aliases)
-                layout.output_file.write_text(
-                    json.dumps(generated_run, ensure_ascii=False, indent=2) + "\n",
-                    encoding="utf-8",
+                execution_modes = sorted(
+                    {str(case.get("mode") or "legacy").strip().lower() for case in cases}
                 )
-                generated_runs.append(str(layout.output_file))
+                for execution_mode in execution_modes:
+                    layout = dashboard_processor.RawDataLayout.create(
+                        run_type, backend, run_date, package_tag, run_extension, execution_mode
+                    )
+                    if not layout.iter_model_dirs():
+                        continue
+                    generated_run = dashboard_processor.RawDataProcessor(layout).process()
+                    generated_run = canonicalize_run_models(generated_run, model_aliases)
+                    layout.output_file.write_text(
+                        json.dumps(generated_run, ensure_ascii=False, indent=2) + "\n",
+                        encoding="utf-8",
+                    )
+                    generated_runs.append(str(layout.output_file))
         aggregate_backend(web_data_root, website_root, run_date, backend)
         enrich_dashboard_metadata(website_root, backend, run_date, board_metadata)
 

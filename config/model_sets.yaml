@@ -1,8 +1,56 @@
 schema_version: 1
 
 sets:
+  daily-40:
+    description: Stable daily smoke set recovered from the validated 20261015 daily-40 run.
+    models:
+      - huggingface/AlbertForMaskedLM
+      - huggingface/BartForCausalLM
+      - huggingface/BertForMaskedLM
+      - huggingface/DistilBertForMaskedLM
+      - huggingface/ElectraForCausalLM
+      - huggingface/google/gemma-2-2b
+      - huggingface/GPT2ForSequenceClassification
+      - huggingface/MobileBertForMaskedLM
+      - huggingface/MT5ForConditionalGeneration
+      - huggingface/openai/whisper-tiny
+      - huggingface/OPTForCausalLM
+      - huggingface/PegasusForCausalLM
+      - huggingface/Qwen/Qwen3-0.6B
+      - huggingface/RobertaForCausalLM
+      - huggingface/T5ForConditionalGeneration
+      - huggingface/XLNetLMHeadModel
+      - timm/inception_v3
+      - timm/repvgg_a2
+      - timm/swin_base_patch4_window7_224
+      - timm/tf_efficientnet_b0
+      - timm/vit_base_patch16_siglip_256
+      - torchbench/basic_gnn_gcn
+      - torchbench/basic_gnn_gin
+      - torchbench/basic_gnn_sage
+      - torchbench/BERT_pytorch
+      - torchbench/cm3leon_generate
+      - torchbench/dcgan
+      - torchbench/demucs
+      - torchbench/densenet121
+      - torchbench/dlrm
+      - torchbench/llama
+      - torchbench/llava
+      - torchbench/mobilenet_v2
+      - torchbench/nanogpt
+      - torchbench/resnet50
+      - torchbench/speech_transformer
+      - torchbench/torch_multimodal_clip
+      - torchbench/tts_angular
+      - torchbench/vision_maskrcnn
+      - torchbench/yolov3
+
   daily-full:
     description: Internal daily set containing every daily and community-dashboard model.
+    include_tags: [daily, community]
+
+  weekly-full:
+    description: Full weekly set; kept separate from daily-full so the run cadence is explicit.
     include_tags: [daily, community]
 
   community-dashboard:

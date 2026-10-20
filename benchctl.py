@@ -100,6 +100,7 @@ def command_list(catalog: Catalog, args: argparse.Namespace) -> int:
                         "name": item.name,
                         "tags": item.tags,
                         "flags": item.flags,
+                        "modes": item.modes,
                         "args": item.args,
                     }
                     for item in models
@@ -192,9 +193,12 @@ def base_environment(catalog: Catalog) -> dict[str, str]:
     if paths.get("data_root"):
         env["TORCHBENCH_DATA_PATH"] = str(paths["data_root"])
     if paths.get("hf_home"):
-        env["HF_HOME"] = str(paths["hf_home"])
-        env["HUGGINGFACE_HUB_CACHE"] = str(paths["hf_home"] / "hub")
-        env["TRANSFORMERS_CACHE"] = str(paths["hf_home"] / "hub")
+        # Keep an explicitly configured shared cache (for example the
+        # offline model cache mounted by the benchmark container).  The
+        # catalog path is only the fallback for a fresh checkout.
+        env.setdefault("HF_HOME", str(paths["hf_home"]))
+        env.setdefault("HUGGINGFACE_HUB_CACHE", str(paths["hf_home"] / "hub"))
+        env.setdefault("TRANSFORMERS_CACHE", env["HUGGINGFACE_HUB_CACHE"])
     if paths.get("pip_cache"):
         env["PIP_CACHE_DIR"] = str(paths["pip_cache"])
     defaults = catalog.defaults()

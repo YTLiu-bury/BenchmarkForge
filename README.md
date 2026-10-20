@@ -56,10 +56,10 @@ DATE=20260917 DVM_DEVICES=4,5 TRITON_DEVICES=1,2 \
 ```
 
 The daily command runs both backends from the same resolved model catalog. It refuses to assign one physical NPU to
-two backends in the same run. By default every model runs with both dynamic shapes disabled and enabled. Cases on one
-NPU remain serial, while different NPUs run concurrently. Set `DYNAMIC_MODES=off` or `DYNAMIC_MODES=on` to select only
-one mode. After execution it publishes isolated dashboard data under `publish/website` by default. Set
-`AUTO_PUBLISH=0` to skip that stage.
+two backends in the same run. The default is dynamic shapes disabled. Set `DYNAMIC_MODES=off,on` to run both modes, or
+set `DYNAMIC_MODES=on` to run only the dynamic mode. Cases on one NPU remain serial, while different NPUs run
+concurrently. After execution it publishes isolated internal and community dashboard data under
+`publish/internal/website` and `publish/community-dashboard/website`. Set `AUTO_PUBLISH=0` to skip that stage.
 
 ## Resume and export
 
@@ -102,10 +102,11 @@ The isolated output is:
 
 ```text
 publish/web_data/<date>/<run>.json
-publish/website/dvm/<date>.json
-publish/website/dvm/manifest.json
-publish/website/triton_experimental/<date>.json
-publish/website/triton_experimental/manifest.json
+publish/internal/website/dvm/<date>.json
+publish/internal/website/dvm/manifest.json
+publish/internal/website/triton_experimental/<date>.json
+publish/internal/website/triton_experimental/manifest.json
+publish/community-dashboard/website/<same dashboard files>
 ```
 
 Static-shape runs keep extension `default`; dynamic-shape runs use extension `dynamic`, so the dashboard can switch

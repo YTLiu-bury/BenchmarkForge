@@ -17,6 +17,7 @@ BASE_COLUMNS = [
     "model",
     "backend",
     "dynamic",
+    "mode",
     "device",
     "status",
     "return_code",
@@ -61,7 +62,7 @@ def export_results(plan: dict[str, Any], run_dir: Path) -> dict[str, Any]:
             writer.writerow(row)
     status_path = run_dir / "status.tsv"
     with status_path.open("w", encoding="utf-8") as handle:
-        handle.write("case_id\tsuite\tmodel\tbackend\tdynamic\tdevice\tstatus\tlog\n")
+        handle.write("case_id\tsuite\tmodel\tbackend\tdynamic\tmode\tdevice\tstatus\tlog\n")
         for item in results:
             handle.write(
                 "\t".join(
@@ -72,6 +73,7 @@ def export_results(plan: dict[str, Any], run_dir: Path) -> dict[str, Any]:
                         "model",
                         "backend",
                         "dynamic",
+                        "mode",
                         "device",
                         "status",
                         "log",

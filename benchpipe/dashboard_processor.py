@@ -25,6 +25,7 @@ DATE_PATTERN = re.compile(r"^\d{8}$")
 PACKAGE_TAG_PATTERN = re.compile(r"^[A-Za-z0-9_.-]+$")
 VERSION_PREFIX_PATTERN = re.compile(r"^v?(\d{3,4})(?:_|$)")
 EXTENSION_TOKEN_PATTERN = re.compile(r"^[A-Za-z0-9_.-]+$")
+EXECUTION_MODE_PATTERN = re.compile(r"(?:^|[-_])(train|inference)(?:[-_]|$)", re.IGNORECASE)
 
 MODEL_PATTERN = re.compile(r"(npu|cuda)\s+train\s+(\S+)")
 BENCH_E2E_PATTERN = re.compile(
@@ -88,6 +89,12 @@ def normalize_backend(backend: str) -> str:
         raise ValueError(f"非法的 backend: {backend}")
     return text
 
+def normalize_execution_mode(mode: str) -> str:
+    text = str(mode or "").strip().lower()
+    if text not in {"", "train", "inference", "legacy"}:
+        raise ValueError(f"非法的 execution_mode: {mode}")
+    return text
+
 def normalize_date(date: str) -> str:
     text = str(date or "").strip()
     if not DATE_PATTERN.match(text):
@@ -142,15 +149,20 @@ class RawDataLayout:
     date: str
     version: str
     extension: str
+    execution_mode: str = ""
 
     @classmethod
-    def create(cls, run_type: str, backend: str, date: str, version: str, extension: str) -> RawDataLayout:
+    def create(
+        cls, run_type: str, backend: str, date: str, version: str, extension: str,
+        execution_mode: str = "",
+    ) -> RawDataLayout:
         return cls(
             run_type=normalize_run_type(run_type),
             backend=normalize_backend(backend),
             date=normalize_date(date),
             version=normalize_version(version),
             extension=normalize_extension(extension),
+            execution_mode=normalize_execution_mode(execution_mode),
         )
 
     @property
@@ -179,7 +191,8 @@ class RawDataLayout:
 
     @property
     def run_id(self) -> str:
-        return f"{self.date}_{self.pta_version}_{self.backend}_{self.extension}_{self.run_type}"
+        suffix = f"_{self.execution_mode}" if self.execution_mode else ""
+        return f"{self.date}_{self.pta_version}_{self.backend}_{self.extension}_{self.run_type}{suffix}"
 
     @property
     def output_file(self) -> Path:
@@ -331,7 +344,9 @@ class RawDataProcessor:
             for entry in parsed.values():
                 entry["type"] = self.layout.model_type
 
-            profile_dir = log_file.parent.parent / "profile"
+            profile_dir = log_file.parent.parent / "profile" / self._infer_execution_mode_from_log_path(log_file)
+            if not profile_dir.exists():
+                profile_dir = log_file.parent.parent / "profile"
             parsed = self._enrich_models_with_profile(parsed, profile_dir if profile_dir.exists() else None)
             model_results = self._merge_model_results(model_results, parsed)
 
@@ -341,6 +356,7 @@ class RawDataProcessor:
             entry["hardware"] = "npu"
             entry["date"] = self.layout.date
             entry["mode"] = self.layout.mode_label
+            entry["execution_mode"] = self.layout.execution_mode or "legacy"
             entry["extension"] = self.layout.extension
 
         run = self._build_run_payload(source_dir, log_files, model_results)
@@ -358,6 +374,7 @@ class RawDataProcessor:
             "hardware": "npu",
             "type": self.layout.run_type,
             "mode": self.layout.backend,
+            "execution_mode": self.layout.execution_mode or "legacy",
             "extension": self.layout.extension,
             "pta_version": self.layout.pta_version,
             "log_files": [relative_path(path) for path in log_files],
@@ -379,7 +396,20 @@ class RawDataProcessor:
 
         if not log_files:
             raise FileNotFoundError(f"未找到任何日志文件: {root_dir}")
+        if self.layout.execution_mode:
+            log_files = [
+                path for path in log_files
+                if self._infer_execution_mode_from_log_path(path) == self.layout.execution_mode
+            ]
+        if not log_files:
+            raise FileNotFoundError(
+                f"未找到 execution_mode={self.layout.execution_mode} 的日志文件: {root_dir}"
+            )
         return root_dir, log_files
+
+    def _infer_execution_mode_from_log_path(self, log_path: Path) -> str:
+        match = EXECUTION_MODE_PATTERN.search(log_path.name)
+        return match.group(1).lower() if match else "legacy"
 
     def _normalize_model_result_names(
         self, model_results: dict[str, dict[str, Any]]
@@ -389,6 +419,9 @@ class RawDataProcessor:
             normalized_name = normalize_model_name(raw_entry.get("model_name") or raw_name)
             entry = dict[str, Any](raw_entry)
             entry["model_name"] = normalized_name
+            entry["execution_mode"] = normalize_execution_mode(
+                entry.get("execution_mode") or self.layout.execution_mode or "legacy"
+            ) or "legacy"
             normalized_results = self._merge_model_results(normalized_results, {normalized_name: entry})
         return normalized_results
 
@@ -427,6 +460,7 @@ class RawDataProcessor:
         current_model: str | None = None
 
         inferred = self._infer_single_model_name_from_log_path(log_path)
+        execution_mode = self._infer_execution_mode_from_log_path(log_path)
         if inferred:
             current_model = inferred
             results.setdefault(current_model, self._make_empty_model_entry(current_model))
@@ -490,6 +524,7 @@ class RawDataProcessor:
             entry["E2E_speed_up_rate"] = safe_ratio(
                 entry.get("eager_E2E_avg_time"), entry.get("compile_E2E_avg_time")
             )
+            entry["execution_mode"] = execution_mode
         return results
 
     def _locate_step_trace_time_csv(self, profile_dir: Path, phase_dir_name: str) -> Path | None:

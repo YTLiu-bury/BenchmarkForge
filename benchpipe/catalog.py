@@ -41,6 +41,7 @@ class ModelSpec:
     runner: str
     args: dict[str, Any]
     flags: list[str]
+    modes: tuple[str, ...]
     tags: tuple[str, ...]
     enabled: bool = True
     reason: str = ""
@@ -107,6 +108,17 @@ class Catalog:
                 flags = list(default_flags) if isinstance(default_flags, list) else []
                 if isinstance(policy.get("flags"), list):
                     flags = list(policy["flags"])
+                configured_modes = policy.get("modes")
+                if isinstance(configured_modes, list) and configured_modes:
+                    modes = tuple(str(item).strip() for item in configured_modes if str(item).strip())
+                else:
+                    policy_flags = {str(item).lstrip("-") for item in policy.get("flags", [])}
+                    if "inference" in policy_flags and "train" not in policy_flags:
+                        modes = ("inference",)
+                    elif "train" in policy_flags and "inference" not in policy_flags:
+                        modes = ("train",)
+                    else:
+                        modes = ("train", "inference")
                 tags = tuple(unique(str(item) for item in model_config.get("tags", [])))
                 result.append(
                     ModelSpec(
@@ -116,6 +128,7 @@ class Catalog:
                         runner=runner,
                         args=args,
                         flags=[str(item) for item in flags],
+                        modes=modes,
                         tags=tags,
                         enabled=bool(model_config.get("enabled", True)),
                         reason=str(model_config.get("reason", "")),

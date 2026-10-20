@@ -26,12 +26,12 @@ ERROR_PATTERNS = [
 
 CATEGORY_PATTERNS = {
     "oom": (r"out of memory", r"outofmemory", r"memory allocation.*failed"),
-    "timeout": (r"timeout", r"timed? out", r"time limit"),
+    "timeout": (r"timed? out", r"time limit(?: exceeded)?", r"process timeout", r"execution timeout", r"timeout expired", r"模型.*超时", r"超时"),
     "missing_data": (r"no such file or directory", r"file not found", r"missing.*(data|file|asset)"),
     "accuracy": (r"fail_accuracy", r"allclose\s*=\s*false", r"accuracy.*(fail|mismatch|diff)", r"precision.*(fail|mismatch)"),
     "dependency": (r"modulenotfounderror", r"importerror", r"cannot import name", r"no module named"),
     "compile_error": (r"inductor", r"lowering", r"codegen", r"compile", r"notimplementederror", r"device .*not supported"),
-    "network": (r"hugging ?face", r"download", r"connection", r"proxy", r"dns", r"max retries exceeded", r"http[s]?://"),
+    "network": (r"couldn't connect to .*huggingface", r"huggingface.*cached files", r"download failed", r"connection (?:reset|refused|failed)", r"network is unreachable", r"proxyerror", r"max retries exceeded", r"sslerror", r"dns"),
 }
 
 
@@ -44,9 +44,12 @@ def sanitize_text(value: Any) -> str:
 
 
 def classify(text: str, status: str) -> str:
-    if "accuracy" in status.lower() or "fail_accuracy" in text.lower():
+    status_text = status.lower().strip()
+    if status_text in {"timeout", "timed_out"}:
+        return "timeout"
+    if "accuracy" in status_text or "fail_accuracy" in text.lower():
         return "accuracy"
-    order = ("oom", "timeout", "missing_data", "dependency", "compile_error", "network")
+    order = ("oom", "compile_error", "missing_data", "dependency", "network", "timeout")
     for category in order:
         if any(re.search(pattern, text, re.IGNORECASE) for pattern in CATEGORY_PATTERNS[category]):
             return category
@@ -95,15 +98,18 @@ def package_tag(run: dict[str, Any]) -> str:
 
 
 def pta_version(tag: str) -> str:
-    match = re.match(r"(\d)(\d)(\d+)$", tag)
-    return f"{match.group(1)}.{match.group(2)}.{match.group(3)}" if match else tag
+    if re.fullmatch(r"\d{4}", tag):
+        return f"{tag[0]}.{tag[1:3]}.{tag[3]}"
+    if re.fullmatch(r"\d{3}", tag):
+        return f"{tag[0]}.{tag[1]}.{tag[2]}"
+    return tag
 
 
 def run_id(date: str, tag: str, case: dict[str, Any]) -> str:
     backend = str(case.get("backend") or "")
     extension = "dynamic" if str(case.get("dynamic") or "off") == "on" else "default"
     suite = {"torchbench": "bench", "huggingface": "huggingface", "timm": "timm"}.get(str(case.get("suite") or ""), str(case.get("suite") or ""))
-    return f"{date}_{pta_version(tag)}_{backend}_{extension}_{suite}"
+    return f"{date}_v{pta_version(tag)}_{backend}_{extension}_{suite}"
 
 
 def build_items(run_dir: Path, date: str) -> list[dict[str, Any]]:
